@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { BlackboardPractice, type WriteScript } from "./components/BlackboardPractice";
 import { hiragana } from "./data/hiragana";
 import { katakana } from "./data/katakana";
 import { n5Kanji } from "./data/n5kanji";
@@ -6,6 +7,7 @@ import { n5Grammar } from "./data/n5grammar";
 import type { KanaEntry } from "./data/hiragana";
 
 type Deck = "hiragana" | "katakana" | "kanji" | "grammar";
+type Screen = "home" | "practice" | "write";
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -172,9 +174,16 @@ const deckText: Record<Deck, string> = {
   grammar: "text-teal-400",
 };
 
+const writeDeckRing: Record<WriteScript, string> = {
+  hiragana: "border-sky-400/70 ring-1 ring-sky-400/70 bg-white/[0.03]",
+  katakana: "border-violet-400/70 ring-1 ring-violet-400/70 bg-white/[0.03]",
+  kanji: "border-amber-400/70 ring-1 ring-amber-400/70 bg-white/[0.03]",
+};
+
 export default function App() {
-  const [screen, setScreen] = useState<"home" | "practice">("home");
+  const [screen, setScreen] = useState<Screen>("home");
   const [deck, setDeck] = useState<Deck>("hiragana");
+  const [writeScript, setWriteScript] = useState<WriteScript>("hiragana");
   const [kanaReverse, setKanaReverse] = useState(false);
   const [kanjiReverse, setKanjiReverse] = useState(false);
   const [question, setQuestion] = useState<Question | null>(null);
@@ -308,14 +317,58 @@ export default function App() {
           </button>
         </section>
 
+        <section
+          className="rounded-2xl border border-[#2d3548] bg-[#1a1f2e] p-5"
+          aria-labelledby="write-heading"
+        >
+          <h2 id="write-heading" className="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
+            Writing practice
+          </h2>
+          <p className="mb-4 text-sm text-slate-500">
+            Blackboard with grid and faint tracing guide. Open Jisho from the board for animated stroke order.
+          </p>
+          <div className="mb-4 flex flex-col gap-2.5" role="group" aria-label="Script for writing">
+            {(
+              [
+                ["hiragana", "Hiragana", "All kana in the quiz list"],
+                ["katakana", "Katakana", "All kana in the quiz list"],
+                ["kanji", "N5 Kanji", "Kanji from the N5 deck"],
+              ] as const
+            ).map(([id, title, hint]) => (
+              <button
+                key={id}
+                type="button"
+                className={`flex flex-col items-start gap-0.5 rounded-xl border border-[#2d3548] bg-[#0f1219] px-4 py-3.5 text-left text-[#e8eaef] transition-colors hover:border-slate-500 hover:bg-[#232838] ${
+                  writeScript === id ? writeDeckRing[id] : ""
+                }`}
+                onClick={() => setWriteScript(id)}
+              >
+                <span className="text-base font-semibold">{title}</span>
+                <span className="text-sm text-slate-400">{hint}</span>
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            className="w-full rounded-[10px] border border-emerald-700/50 bg-emerald-950/40 px-5 py-3.5 text-base font-semibold text-emerald-100 hover:bg-emerald-950/60"
+            onClick={() => setScreen("write")}
+          >
+            Open blackboard
+          </button>
+        </section>
+
         <footer className="text-center text-xs text-slate-500">
-          Multiple choice · Keyboard: 1–4 to answer
+          Quiz: multiple choice · keys 1–4 · Quiz screen: Enter for next
         </footer>
       </div>
     );
   }
 
-  if (!question) return null;
+  if (screen === "write") {
+    return <BlackboardPractice script={writeScript} onBack={() => setScreen("home")} />;
+  }
+
+  if (screen !== "practice" || !question) return null;
 
   const isGrammar = question.kind === "grammar";
 
