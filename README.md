@@ -32,5 +32,8 @@ After `npm run dev`, open the URL shown in the terminal (usually `http://localho
 
 ## Project layout
 
-- `src/App.tsx` — UI and quiz logic
-- `src/data/hiragana.ts`, `katakana.ts`, `n5kanji.ts`, `n5grammar.ts` — Drill data
+- `src/App.tsx` — React Router routes
+- `src/layouts/AppLayout.tsx` — Side navigation + main content area
+- `src/pages/` — Quiz (`/quiz`, `/quiz/play`), Writing (`/writing`, `/writing/board`)
+- `src/quizLogic.ts` — Question builders and deck helpers
+- `src/data/` — `hiragana.ts`, `katakana.ts`, `n5kanji.ts`, `n5grammar.ts`

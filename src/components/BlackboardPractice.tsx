@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { hiragana } from "../data/hiragana";
 import { katakana } from "../data/katakana";
 import { n5Kanji } from "../data/n5kanji";
+import { StrokeOrderAnimation } from "./StrokeOrderAnimation";
 
 export type WriteScript = "hiragana" | "katakana" | "kanji";
 
@@ -297,10 +298,13 @@ export function BlackboardPractice({ script, onBack }: Props) {
         />
       </div>
 
+      <div className="mt-6">
+        <StrokeOrderAnimation char={pick.char} />
+      </div>
+
       <div className="mt-4 space-y-1 text-center text-xs text-slate-500">
         <p>
-          Finger, stylus, or mouse. This does not auto-score your handwriting — use the model and optional{" "}
-          <span className="text-slate-400">Jisho</span> animation for stroke order.
+          Finger, stylus, or mouse. Handwriting is not auto-scored — compare with the model and the animation above.
         </p>
         <a
           href={jishoUrl}
@@ -308,7 +312,7 @@ export function BlackboardPractice({ script, onBack }: Props) {
           rel="noopener noreferrer"
           className="inline-block text-emerald-500/90 underline-offset-2 hover:underline"
         >
-          Stroke order on Jisho →
+          Jisho (readings & more) →
         </a>
       </div>
     </div>
